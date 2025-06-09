@@ -1,0 +1,35 @@
+services:
+  mysql:
+    image: mysql:8.3
+    container_name: clinic-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: clinic
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - clinic-network
+
+  app:
+    build: .
+    container_name: clinic-api
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinic
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+      - "8080:8080"
+    networks:
+      - clinic-network
+
+volumes:
+  mysql-data:
+
+networks:
+  clinic-network:
